@@ -1,0 +1,224 @@
+body {
+    font-family: 'Inter', sans-serif;
+    overscroll-behavior: none;
+}
+
+/* Slider personalizzati */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-track {
+    background: #374151;
+    height: 8px;
+    border-radius: 4px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #3B82F6;
+    border: 2px solid #1F2937;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+input[type="range"]::-moz-range-track {
+    background: #374151;
+    height: 8px;
+    border-radius: 4px;
+}
+
+input[type="range"]::-moz-range-thumb {
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #3B82F6;
+    border: 2px solid #1F2937;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Slider verticali per canali */
+.vertical-slider {
+    writing-mode: bt-lr;
+    -webkit-appearance: slider-vertical;
+    width: 10px;
+    height: 120px;
+    background: #374151;
+    outline: none;
+}
+
+/* Animazioni */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 10px rgba(59, 130, 246, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.8); }
+}
+
+.status-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.macro-active {
+    animation: glow 1s ease-in-out 3;
+}
+
+/* Tab styles */
+.tab-active {
+    background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+    color: white;
+}
+
+/* Special function button styles */
+.function-btn {
+    transition: all 0.2s;
+}
+
+.function-btn.active {
+    background: linear-gradient(135deg, #F59E0B, #F97316);
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.emergency-btn:hover {
+    background: linear-gradient(135deg, #DC2626, #B91C1C);
+    transform: scale(1.02);
+}
+
+.par-mode-btn {
+    min-height: 3rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.par-mode-btn.active {
+    border-color: #F59E0B;
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
+}
+
+.par-mode-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+
+/* Custom Alert z-index fix */
+#custom-alert {
+    z-index: 9999 !important;
+}
+
+/* Player visualizer styles */
+#player-visualizer {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+/* Playlist item styles */
+#playlist-items > div {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#playlist-items > div.bg-gray-600 {
+    font-weight: 600;
+}
+
+/* Progress bar smooth animation */
+#progress-bar {
+    transition: width 0.1s linear;
+}
+
+/* Music Tab Scroll Fix */
+#music-tab-content {
+    height: calc(100vh - 120px); /* Altezza viewport meno header */
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Smooth scrolling */
+#music-tab-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+#music-tab-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+#music-tab-content::-webkit-scrollbar-thumb {
+    background: rgba(139, 92, 246, 0.5);
+    border-radius: 4px;
+}
+
+#music-tab-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 92, 246, 0.7);
+}
+
+/* Fix per il container principale del tab Music */
+.tab-content {
+    height: 100%;
+    position: relative;
+}
+
+/* Assicura che il contenuto del tab Music sia scrollabile */
+#music-tab-content .flex-grow {
+    height: 100%;
+    overflow-y: auto;
+    padding-bottom: 20px;
+}
+
+/* Macro buttons persistence */
+#macro-buttons {
+    min-height: 50px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.macro-btn {
+    position: relative;
+    min-width: 120px;
+}
+
+.macro-btn:hover .delete-macro {
+    opacity: 1;
+}
+
+.delete-macro {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+/* Indicatore macro attive */
+.macro-active-indicator {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 8px;
+    height: 8px;
+    background: #10b981;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DMX Light Controller Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-gray-900 text-white flex flex-col h-screen overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-gray-800/80 backdrop-blur-sm border-b border-gray-700 p-3 flex items-center justify-between shadow-lg z-10">
+        <div class="flex items-center space-x-4">
+            <h1 class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                🎭 DMX Pro Controller
+            </h1>
+            <div class="flex items-center space-x-2 bg-gray-700/50 rounded-lg px-3 py-1">
+                <div id="status-indicator" class="w-3 h-3 rounded-full bg-red-500 transition-colors duration-300" title="Disconnesso"></div>
+                <span id="status-text" class="text-sm font-medium text-red-400">Disconnesso</span>
+            </div>
+        </div>
+
+        <!-- Emergency Controls -->
+        <div class="flex items-center space-x-2">
+            <button id="emergency-stop" class="emergency-btn bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 shadow-md">
+                🚨 EMERGENCY STOP
+            </button>
+            <button id="panic-reset" class="emergency-btn bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 shadow-md">
+                🔥 PANIC RESET
+            </button>
+            <button id="system-reset" class="emergency-btn bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 shadow-md">
+                🔄 RESET SISTEMA
+            </button>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex space-x-2">
+            <button class="tab-btn tab-active px-4 py-2 rounded-lg font-medium transition-all duration-200" data-tab="control">
+                🎚️ Controllo
+            </button>
+            <button class="tab-btn px-4 py-2 rounded-lg font-medium transition-all duration-200 bg-gray-700 hover:bg-gray-600" data-tab="scenes">
+                🎬 Scene
+            </button>
+            <button class="tab-btn px-4 py-2 rounded-lg font-medium transition-all duration-200 bg-gray-700 hover:bg-gray-600" data-tab="stage">
+                🎪 Palco
+            </button>
+            <button class="tab-btn px-4 py-2 rounded-lg font-medium transition-all duration-200 bg-gray-700 hover:bg-gray-600" data-tab="music">
+                🎵 Music
+            </button>
+            <button class="tab-btn px-4 py-2 rounded-lg font-medium transition-all duration-200 bg-gray-700 hover:bg-gray-600" data-tab="settings">
+                ⚙️ Impostazioni
+            </button>
+        </div>
+
+        <div class="flex items-center space-x-3">
+            <button id="connect-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 shadow-md">
+                📡 Connetti
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gray-800/50 backdrop-blur-sm p-4 overflow-y-auto border-r border-gray-700">
+            <div class="space-y-4">
+                <!-- Fixtures Section -->
+                <div>
+                    <h2 class="text-lg font-semibold mb-3 text-blue-400">🎭 Fixtures</h2>
+                    <div class="space-y-2 mb-4">
+                        <button id="add-moving-head" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-2 px-3 rounded-lg transition-all duration-200 font-medium">
+                            🎯 Testa Mobile (21ch)
+                        </button>
+                        <button id="add-par" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white py-2 px-3 rounded-lg transition-all duration-200 font-medium">
+                            💡 Luce Fissa (8ch)
+                        </button>
+                        <button id="add-par-led" class="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white py-2 px-3 rounded-lg transition-all duration-200 font-medium">
+                            🎨 PAR LED (7ch)
+                        </button>
+                    </div>
+                    <div id="fixture-list" class="space-y-2 max-h-40 overflow-y-auto">
+                        <div class="text-gray-500 text-sm text-center p-4">
+                            Nessuna fixture aggiunta
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scene Shortcuts -->
+                <div class="bg-gray-700/50 rounded-lg p-4">
+                    <h3 class="text-md font-semibold mb-3 text-purple-400">🎯 Scene Shortcuts</h3>
+                    <div class="text-xs text-gray-400 mb-3">
+                        Clicca ⌨️ su una scena per assegnare un tasto
+                    </div>
+                    <div id="scene-shortcuts" class="space-y-1 max-h-32 overflow-y-auto">
+                        <!-- I binding verranno mostrati qui -->
+                    </div>
+                </div>
+
+                <!-- AI Scene Generator -->
+                <div class="bg-gray-700/50 rounded-lg p-4">
+                    <h3 class="text-md font-semibold mb-3 text-purple-400">🤖 AI Scene Generator</h3>
+                    <div id="ai-controls" class="space-y-3">
+                        <!-- Pulsanti AI verranno inseriti da JS -->
+                    </div>
+                </div>
+
+                <!-- Audio Reactive Control -->
+                <div class="bg-gray-700/50 rounded-lg p-4">
+                    <h3 class="text-md font-semibold mb-3 text-green-400">🎵 Audio Reactive</h3>
+                    <div class="space-y-3">
+                        <!-- Visualizer -->
+                        <canvas id="audio-visualizer" class="w-full h-20 bg-black/50 rounded"></canvas>
+                        
+                        <!-- Controls -->
+                        <button id="toggle-audio" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-3 rounded-lg transition-all duration-200 font-medium">
+                            🎤 Attiva Microfono
+                        </button>
+                        
+                        <!-- Sensitivity -->
+                        <div class="space-y-1">
+                            <label class="text-xs text-gray-400 flex justify-between">
+                                <span>Sensibilità</span>
+                                <span id="audio-sensitivity-value" class="text-green-400">5</span>
+                            </label>
+                            <input type="range" id="audio-sensitivity" min="1" max="10" value="5" class="w-full">
+                        </div>
+                        
+                        <!-- Mode selector -->
+                        <select id="audio-mode" class="w-full bg-gray-700 text-white rounded px-2 py-1 text-sm">
+                            <option value="colors">Solo Colori</option>
+                            <option value="intensity">Intensità</option>
+                            <option value="movement">Movimento + Colori</option>
+                            <option value="strobe">Strobo su Beat</option>
+                            <option value="full">Controllo Totale</option>
+                        </select>
+                        
+                        <!-- Status -->
+                        <div id="audio-status" class="text-xs text-center text-gray-400">
+                            Microfono disattivato
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Tab Content Container -->
+        <div id="tab-container" class="flex-grow flex overflow-hidden">
+            <!-- Content will be loaded here -->
+        </div>
+    </main>
+
+    <!-- Monitor DMX (floating) -->
+    <div id="dmx-monitor" class="fixed bottom-4 right-4 w-96 bg-gray-800/95 backdrop-blur-sm border border-gray-600 rounded-lg shadow-2xl transition-all duration-300 z-50">
+        <div class="p-3 border-b border-gray-600 flex justify-between items-center cursor-pointer" onclick="DMXMonitor.toggle()">
+            <div class="flex items-center space-x-2">
+                <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                <span class="text-sm font-medium">📡 Monitor DMX</span>
+            </div>
+            <span id="monitor-toggle">▼</span>
+        </div>
+        <div id="monitor-content" class="h-48 overflow-y-auto p-3 text-xs font-mono bg-black/50">
+            <div class="text-green-400">[SISTEMA] DMX Controller inizializzato</div>
+        </div>
+        <div class="p-2 border-t border-gray-600 flex space-x-2">
+            <button onclick="DMXMonitor.clear()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded">Clear</button>
+            <button onclick="DMXMonitor.togglePause()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded">
+                <span id="pause-btn">Pause</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Load all JavaScript modules -->
+    <script src="js/utils.js"></script>
+    <script src="js/dmx-controller.js"></script>
+    <script src="js/fixtures.js"></script>
+    <script src="js/scenes.js"></script>
+    <script src="js/shortcuts.js"></script>
+    <script src="js/canvas-stage.js"></script>
+    <script src="js/ai-generator.js"></script>
+    <script src="js/ui-manager.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/audio-reactive.js"></script>
+    <script src="js/custom-alerts.js"></script>
+    <script src="js/audio-player.js"></script>
+    <script src="js/macros.js"></script>
+
+</body>
+</html>
