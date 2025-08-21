@@ -389,6 +389,39 @@ class AudioPlayer {
             const source = this.audioContext.createMediaElementSource(this.audioElement);
             source.connect(this.analyser);
             this.analyser.connect(this.audioContext.destination);
+            
+            // Initialize Meyda for audio player
+            if (typeof Meyda !== 'undefined') {
+                try {
+                    this.meydaAnalyzer = Meyda.createMeydaAnalyzer({
+                        audioContext: this.audioContext,
+                        source: source,
+                        bufferSize: 512,
+                        featureExtractors: [
+                            'rms',
+                            'energy', 
+                            'zcr',
+                            'spectralCentroid',
+                            'spectralFlux',
+                            'mfcc',
+                            'loudness'
+                        ],
+                        callback: (features) => {
+                            // Process Meyda features for better beat detection
+                            if (this.beatDetector && this.beatDetector.processMeydaFeatures) {
+                                this.beatDetector.processMeydaFeatures(features);
+                            }
+                        }
+                    });
+                    this.meydaAnalyzer.start();
+                    DMXMonitor.add('[PLAYER] ✅ Meyda ATTIVO per analisi audio avanzata', 'success');
+                } catch (error) {
+                    console.warn('[PLAYER] Meyda init failed:', error);
+                    DMXMonitor.add('[PLAYER] ⚠️ Meyda non disponibile', 'warning');
+                }
+            } else {
+                DMXMonitor.add('[PLAYER] ❌ Meyda NON TROVATO - Usando analisi base', 'error');
+            }
         }
         
         this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
