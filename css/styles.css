@@ -361,3 +361,153 @@ input[type="range"]::-moz-range-thumb {
     background: white;
     border: 2px solid #3B82F6;
 }
+
+
+
+/* Chase animations */
+.chase-step-active {
+    background: linear-gradient(135deg, #F59E0B, #DC2626);
+    animation: pulse 1s infinite;
+}
+
+#beat-bar {
+    transition: width 100ms cubic-bezier(0.4, 0.0, 1, 1);
+}
+
+.beat-flash {
+    animation: beatFlash 200ms ease-out;
+}
+
+@keyframes beatFlash {
+    0% { 
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% { 
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+    100% { 
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Scene transition effects */
+.scene-transitioning {
+    opacity: 0.5;
+    transition: opacity 200ms;
+}
+
+/* Chase control panel */
+#chase-controller {
+    backdrop-filter: blur(10px);
+    background: rgba(31, 41, 55, 0.95);
+}
+
+.chase-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #F59E0B;
+    display: inline-block;
+    margin: 0 2px;
+    opacity: 0.3;
+    transition: all 200ms;
+}
+
+.chase-indicator.active {
+    opacity: 1;
+    transform: scale(1.5);
+    background: #DC2626;
+}
+
+/* Scene Editor Styles */
+#scene-editor-modal {
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.scene-slider {
+    cursor: pointer;
+}
+
+.scene-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: currentColor;
+    cursor: pointer;
+}
+
+.scene-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: currentColor;
+    cursor: pointer;
+}
+
+.scene-number::-webkit-inner-spin-button,
+.scene-number::-webkit-outer-spin-button {
+    opacity: 1;
+}
+
+/* Color preview animation */
+.color-preview {
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.color-preview:hover {
+    transform: scale(1.2);
+}
+
+/* Beat timing indicator */
+#chase-progress {
+    transition: width linear;
+}
+
+.beat-flash {
+    animation: beatPulse 200ms ease-out;
+}
+
+@keyframes beatPulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 rgba(255, 165, 0, 0.7);
+    }
+    50% {
+        transform: scale(1.5);
+        box-shadow: 0 0 20px rgba(255, 165, 0, 0.7);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 rgba(255, 165, 0, 0);
+    }
+}
+
+/* Smooth BPM transitions */
+.bpm-changing {
+    background: linear-gradient(90deg, 
+        rgba(139, 92, 246, 0.2) 0%, 
+        rgba(139, 92, 246, 0.5) 50%, 
+        rgba(139, 92, 246, 0.2) 100%);
+    animation: bpmWave 0.5s ease-out;
+}
+
+@keyframes bpmWave {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}

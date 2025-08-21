@@ -29,9 +29,9 @@
             <button id="emergency-stop" class="emergency-btn bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 shadow-md">
                 🚨 EMERGENCY STOP
             </button>
-            <button id="panic-reset" class="emergency-btn bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 shadow-md">
+            <!--<button id="panic-reset" class="emergency-btn bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 shadow-md">
                 🔥 PANIC RESET
-            </button>
+            </button>-->
             <button id="system-reset" class="emergency-btn bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 shadow-md">
                 🔄 RESET SISTEMA
             </button>
@@ -44,6 +44,9 @@
             </button>
             <button class="tab-btn px-4 py-2 rounded-lg font-medium transition-all duration-200 bg-gray-700 hover:bg-gray-600" data-tab="scenes">
                 🎬 Scene
+            </button>
+            <button class="tab-btn px-4 py-2 rounded-lg font-medium transition-all duration-200 bg-gray-700 hover:bg-gray-600" data-tab="chase">
+                🎯 Chase
             </button>
             <button class="tab-btn px-4 py-2 rounded-lg font-medium transition-all duration-200 bg-gray-700 hover:bg-gray-600" data-tab="stage">
                 🎪 Palco
@@ -131,6 +134,7 @@
                         
                         <!-- Mode selector -->
                         <select id="audio-mode" class="w-full bg-gray-700 text-white rounded px-2 py-1 text-sm">
+                            <option value="none">Nessuno (solo beat)</option>
                             <option value="colors">Solo Colori</option>
                             <option value="intensity">Intensità</option>
                             <option value="movement">Movimento + Colori</option>
@@ -193,6 +197,7 @@
     <script src="js/audio-player.js"></script>
     <script src="js/macros.js"></script>
     <script src="js/beat-detector.js"></script>
+    <script src="js/chase-manager.js"></script>
 
 </body>
 </html>

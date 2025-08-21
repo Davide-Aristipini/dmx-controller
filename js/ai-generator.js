@@ -176,8 +176,124 @@ class AIGenerator {
         };
     }
 
+    initializeBeatSync() {
+        this.beatSyncEnabled = false;
+        this.lastBeatTime = 0;
+        this.beatPhase = 0;
+        this.currentBPM = 120;
+        this.beatMultiplier = 1; // 1 = ogni beat, 2 = ogni 2 beat, etc.
+    }
+
+    // Nuovo metodo per ricevere beat
+    onBeatDetected(beat) {
+        if (!this.isRunning || !this.currentMood) return;
+        
+        const now = Date.now();
+        this.lastBeatTime = now;
+        
+        // Se abbiamo il BPM, calcola la fase
+        if (beat.bpm) {
+            this.currentBPM = beat.bpm;
+        }
+        
+        // Trigger azioni basate sul mood e sul beat
+        this.applyBeatToMood(beat);
+    }
+
+    applyBeatToMood(beat) {
+        const config = this.moodConfigs[this.currentMood];
+        if (!config) return;
+        
+        // Azioni diverse per ogni mood sul beat
+        switch (this.currentMood) {
+            case 'party':
+                this.onBeatParty(beat);
+                break;
+            case 'romantico':
+                this.onBeatRomantico(beat);
+                break;
+            case 'energetico':
+                this.onBeatEnergetico(beat);
+                break;
+            case 'drammatico':
+                this.onBeatDrammatico(beat);
+                break;
+            // Aggiungi altri mood...
+        }
+    }
+
+    onBeatParty(beat) {
+        // Cambio colore su ogni beat
+        const colors = [
+            [255, 0, 0], [0, 255, 0], [0, 0, 255],
+            [255, 255, 0], [255, 0, 255], [0, 255, 255]
+        ];
+        const color = colors[beat.count % colors.length];
+        
+        this.app.fixtures.forEach(fixture => {
+            // Flash immediato sul beat
+            this.app.fixtureManager.applyColorToFixture(
+                fixture, color[0], color[1], color[2], 255
+            );
+            
+            if (fixture.type === 'moving-head' && beat.strength > 0.7) {
+                // Cambio posizione sui beat forti
+                fixture.values[0] = Math.floor(Math.random() * 255);
+                fixture.values[2] = Math.floor(Math.random() * 180) + 40;
+                this.app.dmxController.setChannel(fixture.startChannel, fixture.values[0]);
+                this.app.dmxController.setChannel(fixture.startChannel + 2, fixture.values[2]);
+            }
+        });
+    }
+
+    onBeatRomantico(beat) {
+        // Pulsazione delicata sul beat
+        const intensity = 150 + beat.strength * 105;
+        
+        this.app.fixtures.forEach(fixture => {
+            const r = Math.floor(200 + beat.strength * 55);
+            const g = Math.floor(100 + beat.strength * 50);
+            const b = Math.floor(100);
+            
+            this.app.fixtureManager.applyColorToFixture(fixture, r, g, b, intensity);
+        });
+    }
+
+    onBeatEnergetico(beat) {
+        // Strobo veloce sui beat forti
+        if (beat.strength > 0.6) {
+            this.app.fixtures.forEach(fixture => {
+                if (fixture.type === 'moving-head') {
+                    fixture.values[7] = 200; // Strobo
+                    this.app.dmxController.setChannel(fixture.startChannel + 7, 200);
+                    
+                    // Auto-off dopo 50ms
+                    setTimeout(() => {
+                        fixture.values[7] = 0;
+                        this.app.dmxController.setChannel(fixture.startChannel + 7, 0);
+                    }, 50);
+                }
+            });
+        }
+    }
+
+    onBeatDrammatico(beat) {
+        // Blackout e flash alternati
+        const isFlash = beat.count % 4 === 0;
+        
+        this.app.fixtures.forEach(fixture => {
+            if (isFlash) {
+                this.app.fixtureManager.applyColorToFixture(fixture, 255, 255, 255, 255);
+            } else {
+                this.app.fixtureManager.applyColorToFixture(fixture, 0, 0, 0, 0);
+            }
+        });
+    }
+
+
     initialize() {
         this.renderControls();
+        this.initializeBeatSync();
     }
 
     renderControls() {
@@ -280,6 +396,14 @@ class AIGenerator {
         this.currentMood = mood;
         const config = this.moodConfigs[mood];
         DMXMonitor.add(`[AI] Generando mood: ${config.name}`, 'system');
+        
+        // Check se c'è musica attiva
+        const musicActive = (this.app.audioPlayer?.isPlaying || this.app.audioReactive?.isActive);
+        
+        if (musicActive) {
+            this.beatSyncEnabled = true;
+            DMXMonitor.add(`[AI] Beat sync ATTIVO per mood ${config.name}`, 'success');
+        }
         
         // Chiama la funzione appropriata per ogni mood
         switch(mood) {

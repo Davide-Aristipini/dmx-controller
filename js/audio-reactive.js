@@ -389,6 +389,13 @@ class AudioReactive {
     applyEffects(analysis) {
         const { bass, mid, treble, energy, beat } = analysis;
         
+        // Se la modalità è "none", non applica effetti alle luci
+        if (this.mode === 'none') {
+            // Non fa nulla con le luci, ma continua a rilevare i beat
+            // per il chase manager
+            return;
+        }
+        
         this.app.fixtures.forEach(fixture => {
             switch (this.mode) {
                 case 'colors':
@@ -412,6 +419,10 @@ class AudioReactive {
                     
                 case 'full':
                     this.applyFullEffect(fixture, bass, mid, treble, energy, beat);
+                    break;
+                    
+                case 'none':
+                    // Già gestito sopra
                     break;
             }
         });

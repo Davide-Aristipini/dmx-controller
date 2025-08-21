@@ -28,6 +28,7 @@ class DMXApp {
         this.audioReactive = new AudioReactive(this);
         this.audioPlayer = new AudioPlayer(this);
         this.macroManager = new MacroManager(this);
+        this.chaseManager = new ChaseManager(this);  // Aggiungi questa linea
 
         // Setup event listeners
         this.setupEventListeners();
@@ -45,7 +46,8 @@ class DMXApp {
             this.audioPlayer.initialize();
             this.macroManager.initialize();
             this.stageCanvas.initialize();
-            this.aiGenerator.initialize();
+            this.aiGenerator.initialize();  // IMPORTANTE: questo inizializza l'AI Generator
+            // NON chiamare this.chaseManager.initialize() qui - verrà chiamato solo quando si apre il tab
         }, 100);
 
         // Log initialization
