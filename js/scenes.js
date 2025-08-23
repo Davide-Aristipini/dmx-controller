@@ -504,15 +504,95 @@ class SceneManager {
                         <input type="number" min="0" max="255" value="${values[6] || 0}"
                             data-fixture="${fixture.id}" data-channel="6"
                             class="w-full bg-gray-700 text-white rounded px-2 py-1 text-xs mt-1 scene-number">
+                     </div>
+                </div>
+            `;
+        } else if (fixture.type === 'par-rgb') {
+            controlsHTML = `
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-xs text-gray-400">Dimmer (Ch${fixture.startChannel})</label>
+                        <input type="range" min="0" max="255" value="${values[0] || 0}" 
+                            data-fixture="${fixture.id}" data-channel="0" 
+                            class="w-full scene-slider">
+                        <input type="number" min="0" max="255" value="${values[0] || 0}"
+                            data-fixture="${fixture.id}" data-channel="0"
+                            class="w-full bg-gray-700 text-white rounded px-2 py-1 text-xs mt-1 scene-number">
+                    </div>
+                    
+                    <div>
+                        <label class="text-xs text-gray-400">Strobo (Ch${fixture.startChannel + 1})</label>
+                        <input type="range" min="0" max="255" value="${values[1] || 0}" 
+                            data-fixture="${fixture.id}" data-channel="1" 
+                            class="w-full scene-slider">
+                        <input type="number" min="0" max="255" value="${values[1] || 0}"
+                            data-fixture="${fixture.id}" data-channel="1"
+                            class="w-full bg-gray-700 text-white rounded px-2 py-1 text-xs mt-1 scene-number">
+                    </div>
+                    
+                    <!-- Effect Mode -->
+                    <div>
+                        <label class="text-xs text-gray-400">Effect (Ch${fixture.startChannel + 2})</label>
+                        <select data-fixture="${fixture.id}" data-channel="2" 
+                                class="w-full bg-gray-700 text-white rounded px-2 py-1 text-xs scene-select">
+                            <option value="0" ${values[2] === 0 ? 'selected' : ''}>OFF</option>
+                            <option value="75" ${values[2] === 75 ? 'selected' : ''}>Jump</option>
+                            <option value="125" ${values[2] === 125 ? 'selected' : ''}>Fade</option>
+                            <option value="255" ${values[2] === 255 ? 'selected' : ''}>Music</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="text-xs text-gray-400">Speed (Ch${fixture.startChannel + 3})</label>
+                        <input type="range" min="0" max="255" value="${values[3] || 0}" 
+                            data-fixture="${fixture.id}" data-channel="3" 
+                            class="w-full scene-slider">
+                        <input type="number" min="0" max="255" value="${values[3] || 0}"
+                            data-fixture="${fixture.id}" data-channel="3"
+                            class="w-full bg-gray-700 text-white rounded px-2 py-1 text-xs mt-1 scene-number">
+                    </div>
+                    
+                    <!-- RGB -->
+                    <div class="col-span-2">
+                        <label class="text-xs text-gray-400">RGB (Ch${fixture.startChannel + 4}-${fixture.startChannel + 6})</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div>
+                                <input type="range" min="0" max="255" value="${values[4] || 0}" 
+                                    data-fixture="${fixture.id}" data-channel="4" 
+                                    class="w-full scene-slider" style="accent-color: red;">
+                                <input type="number" min="0" max="255" value="${values[4] || 0}"
+                                    data-fixture="${fixture.id}" data-channel="4"
+                                    class="w-full bg-gray-700 text-white rounded px-2 py-1 text-xs mt-1 scene-number">
+                            </div>
+                            <div>
+                                <input type="range" min="0" max="255" value="${values[5] || 0}" 
+                                    data-fixture="${fixture.id}" data-channel="5" 
+                                    class="w-full scene-slider" style="accent-color: green;">
+                                <input type="number" min="0" max="255" value="${values[5] || 0}"
+                                    data-fixture="${fixture.id}" data-channel="5"
+                                    class="w-full bg-gray-700 text-white rounded px-2 py-1 text-xs mt-1 scene-number">
+                            </div>
+                            <div>
+                                <input type="range" min="0" max="255" value="${values[6] || 0}" 
+                                    data-fixture="${fixture.id}" data-channel="6" 
+                                    class="w-full scene-slider" style="accent-color: blue;">
+                                <input type="number" min="0" max="255" value="${values[6] || 0}"
+                                    data-fixture="${fixture.id}" data-channel="6"
+                                    class="w-full bg-gray-700 text-white rounded px-2 py-1 text-xs mt-1 scene-number">
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
         }
         
         // Preview del colore
-        const r = fixture.type === 'moving-head' ? values[8] || 0 : values[1] || 0;
-        const g = fixture.type === 'moving-head' ? values[9] || 0 : values[2] || 0;
-        const b = fixture.type === 'moving-head' ? values[10] || 0 : values[3] || 0;
+        const r = fixture.type === 'moving-head' ? values[8] || 0 : 
+          fixture.type === 'par-rgb' ? values[4] || 0 : values[1] || 0;
+        const g = fixture.type === 'moving-head' ? values[9] || 0 : 
+                fixture.type === 'par-rgb' ? values[5] || 0 : values[2] || 0;
+        const b = fixture.type === 'moving-head' ? values[10] || 0 : 
+                fixture.type === 'par-rgb' ? values[6] || 0 : values[3] || 0;
         
         return `
             <div class="bg-gray-700/50 rounded-lg p-4">

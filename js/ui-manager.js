@@ -856,6 +856,160 @@ class UIManager {
         if (fixture.type === 'par-led' && specialFunctions) {
             this.renderPARLEDControls(fixture, specialFunctions);
         }
+
+        if (fixture.type === 'par-rgb' && specialFunctions) {
+            this.renderPARRGBControls(fixture, specialFunctions);
+        }
+    }
+
+    renderPARRGBControls(fixture, container) {
+        const currentStrobe = fixture.values[1] || 0;
+        const currentEffect = fixture.values[2] || 0;
+        const currentSpeed = fixture.values[3] || 0;
+        
+        container.innerHTML = `
+            <div class="bg-gray-800/50 rounded-lg p-6">
+                <h3 class="text-lg font-semibold mb-4 text-pink-400">🌈 Controlli PAR RGB</h3>
+                
+                <!-- Strobo Control -->
+                <div class="mb-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-sm font-medium text-gray-300">Strobo (Ch2)</label>
+                        <span class="text-sm font-bold text-white bg-gray-800 px-2 py-1 rounded">${currentStrobe}</span>
+                    </div>
+                    <input type="range" id="strobe-${fixture.id}" min="0" max="255" value="${currentStrobe}" 
+                        class="w-full" onchange="dmxApp.uiManager.setPARRGBStrobe(${fixture.id}, this.value)">
+                    <div class="flex justify-between text-xs text-gray-400 mt-1">
+                        <span>OFF (0)</span>
+                        <span>Lento</span>
+                        <span>Veloce (255)</span>
+                    </div>
+                </div>
+                
+                <!-- Effect Mode -->
+                <div class="mb-4">
+                    <label class="text-sm font-medium text-gray-300 mb-2 block">Modalità Effetto (Ch3)</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="dmxApp.uiManager.setPARRGBEffect(${fixture.id}, 'off')" 
+                                class="par-rgb-mode-btn bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white text-sm ${currentEffect === 0 ? 'ring-2 ring-pink-500' : ''}">
+                            OFF<br><span class="text-xs opacity-75">0-49</span>
+                        </button>
+                        <button onclick="dmxApp.uiManager.setPARRGBEffect(${fixture.id}, 'jump')" 
+                                class="par-rgb-mode-btn bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white text-sm ${currentEffect >= 50 && currentEffect <= 100 ? 'ring-2 ring-pink-500' : ''}">
+                            JUMP<br><span class="text-xs opacity-75">50-100</span>
+                        </button>
+                        <button onclick="dmxApp.uiManager.setPARRGBEffect(${fixture.id}, 'fade')" 
+                                class="par-rgb-mode-btn bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white text-sm ${currentEffect >= 101 && currentEffect <= 150 ? 'ring-2 ring-pink-500' : ''}">
+                            FADE<br><span class="text-xs opacity-75">101-150</span>
+                        </button>
+                        <button onclick="dmxApp.uiManager.setPARRGBEffect(${fixture.id}, 'music')" 
+                                class="par-rgb-mode-btn bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-white text-sm ${currentEffect === 255 ? 'ring-2 ring-pink-500' : ''}">
+                            MUSIC<br><span class="text-xs opacity-75">255</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Effect Speed -->
+                <div class="mb-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-sm font-medium text-gray-300">Velocità Effetto (Ch4)</label>
+                        <span class="text-sm font-bold text-white bg-gray-800 px-2 py-1 rounded">${currentSpeed}</span>
+                    </div>
+                    <input type="range" id="effect-speed-${fixture.id}" min="0" max="255" value="${currentSpeed}" 
+                        class="w-full" onchange="dmxApp.uiManager.setPARRGBSpeed(${fixture.id}, this.value)">
+                    <div class="flex justify-between text-xs text-gray-400 mt-1">
+                        <span>Lento (0)</span>
+                        <span>Veloce (255)</span>
+                    </div>
+                </div>
+                
+                <!-- Quick Presets -->
+                <div class="grid grid-cols-3 gap-2">
+                    <button onclick="dmxApp.uiManager.applyPARRGBPreset(${fixture.id}, 'static')" 
+                            class="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded text-white text-xs">
+                        Statico
+                    </button>
+                    <button onclick="dmxApp.uiManager.applyPARRGBPreset(${fixture.id}, 'party')" 
+                            class="bg-purple-600 hover:bg-purple-700 px-3 py-2 rounded text-white text-xs">
+                        Party
+                    </button>
+                    <button onclick="dmxApp.uiManager.applyPARRGBPreset(${fixture.id}, 'ambient')" 
+                            class="bg-green-600 hover:bg-green-700 px-3 py-2 rounded text-white text-xs">
+                        Ambient
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    setPARRGBStrobe(fixtureId, value) {
+        const fixture = this.app.fixtures.find(f => f.id === fixtureId);
+        if (!fixture || fixture.type !== 'par-rgb') return;
+        
+        fixture.values[1] = parseInt(value);
+        this.app.dmxController.setChannel(fixture.startChannel + 1, parseInt(value));
+        
+        const strobeName = value == 0 ? 'OFF' : value < 128 ? 'Lento' : 'Veloce';
+        DMXMonitor.add(`[PAR RGB] ${fixture.name}: Strobo ${strobeName} (${value})`, 'system');
+    }
+
+    setPARRGBEffect(fixtureId, mode) {
+        const fixture = this.app.fixtures.find(f => f.id === fixtureId);
+        if (!fixture || fixture.type !== 'par-rgb') return;
+        
+        const values = {
+            'off': 0,
+            'jump': 75,   // Metà tra 50-100
+            'fade': 125,  // Metà tra 101-150
+            'music': 255
+        };
+        
+        const value = values[mode] || 0;
+        fixture.values[2] = value;
+        this.app.dmxController.setChannel(fixture.startChannel + 2, value);
+        
+        DMXMonitor.add(`[PAR RGB] ${fixture.name}: Effetto ${mode.toUpperCase()}`, 'system');
+        this.renderControlPanel(); // Refresh per aggiornare l'anello di selezione
+    }
+
+    setPARRGBSpeed(fixtureId, speed) {
+        const fixture = this.app.fixtures.find(f => f.id === fixtureId);
+        if (!fixture || fixture.type !== 'par-rgb') return;
+        
+        fixture.values[3] = parseInt(speed);
+        this.app.dmxController.setChannel(fixture.startChannel + 3, parseInt(speed));
+        
+        DMXMonitor.add(`[PAR RGB] ${fixture.name}: Velocità effetto ${speed}`, 'system');
+    }
+
+    applyPARRGBPreset(fixtureId, preset) {
+        const fixture = this.app.fixtures.find(f => f.id === fixtureId);
+        if (!fixture || fixture.type !== 'par-rgb') return;
+        
+        switch(preset) {
+            case 'static':
+                // Colore statico, no effetti
+                this.setPARRGBStrobe(fixtureId, 0);
+                this.setPARRGBEffect(fixtureId, 'off');
+                this.setPARRGBSpeed(fixtureId, 0);
+                break;
+                
+            case 'party':
+                // Jump veloce con strobo
+                this.setPARRGBStrobe(fixtureId, 200);
+                this.setPARRGBEffect(fixtureId, 'jump');
+                this.setPARRGBSpeed(fixtureId, 200);
+                break;
+                
+            case 'ambient':
+                // Fade lento senza strobo
+                this.setPARRGBStrobe(fixtureId, 0);
+                this.setPARRGBEffect(fixtureId, 'fade');
+                this.setPARRGBSpeed(fixtureId, 50);
+                break;
+        }
+        
+        DMXMonitor.add(`[PAR RGB] ${fixture.name}: Preset ${preset}`, 'success');
     }
 
     renderPARLEDControls(fixture, container) {

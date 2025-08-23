@@ -1312,6 +1312,13 @@ class ChaseManager {
                 fixture.values[6] = 0;  // Speed 0
                 this.app.dmxController.setChannel(fixture.startChannel + 5, 0);
                 this.app.dmxController.setChannel(fixture.startChannel + 6, 0);
+            } else if (fixture.type === 'par-rgb') {
+                fixture.values[1] = 0;  // Strobe OFF (Ch2)
+                fixture.values[2] = 0;  // Effect OFF (Ch3)
+                fixture.values[3] = 0;  // Speed 0 (Ch4)
+                this.app.dmxController.setChannel(fixture.startChannel + 1, 0);
+                this.app.dmxController.setChannel(fixture.startChannel + 2, 0);
+                this.app.dmxController.setChannel(fixture.startChannel + 3, 0);
             } else if (fixture.type === 'par' && fixture.channels > 7) {
                 fixture.values[7] = 0;  // Strobe OFF
                 this.app.dmxController.setChannel(fixture.startChannel + 7, 0);
@@ -1391,6 +1398,15 @@ class ChaseManager {
                                 if (fixture.channels > 7) {
                                     fixtureData.values[7] = 0; // Strobe OFF
                                 }
+                            } else if (fixture.type === 'par-rgb') {
+                                // Per RGB Cycle
+                                fixtureData.values[0] = 255;       // Dimmer
+                                fixtureData.values[1] = 0;         // Strobe OFF
+                                fixtureData.values[2] = 0;         // Effect OFF
+                                fixtureData.values[3] = 0;         // Speed 0
+                                fixtureData.values[4] = color.r;   // Red
+                                fixtureData.values[5] = color.g;   // Green
+                                fixtureData.values[6] = color.b;   // Blue
                             }
                             
                             return fixtureData;
@@ -1464,6 +1480,19 @@ class ChaseManager {
                                         fixtureData.values[7] = 0; // IMPORTANTE: Strobe OFF
                                     }
                                 }
+                            } else if (fixture.type === 'par-rgb') {
+                                if (state.strobe) {
+                                    fixtureData.values[0] = 255;   // Dimmer
+                                    fixtureData.values[1] = 255;   // Strobe MAX
+                                    fixtureData.values[2] = 0;     // No effect
+                                    fixtureData.values[3] = 0;     // Speed 0
+                                    fixtureData.values[4] = 255;   // R
+                                    fixtureData.values[5] = 255;   // G
+                                    fixtureData.values[6] = 255;   // B
+                                } else {
+                                    // Tutto OFF incluso strobo
+                                    fixtureData.values[1] = 0;     // IMPORTANTE: Strobe OFF
+                                }
                             }
                             
                             return fixtureData;
@@ -1528,6 +1557,15 @@ class ChaseManager {
                                 if (fixture.channels > 7) {
                                     fixtureData.values[7] = 0; // IMPORTANTE: Strobe OFF
                                 }
+                            } else if (fixture.type === 'par-rgb') {
+                                // Per RGB Cycle
+                                fixtureData.values[0] = 255;       // Dimmer
+                                fixtureData.values[1] = 0;         // Strobe OFF
+                                fixtureData.values[2] = 0;         // Effect OFF
+                                fixtureData.values[3] = 0;         // Speed 0
+                                fixtureData.values[4] = color.r;   // Red
+                                fixtureData.values[5] = color.g;   // Green
+                                fixtureData.values[6] = color.b;   // Blue
                             }
                             
                             return fixtureData;
@@ -1587,6 +1625,15 @@ class ChaseManager {
                                 if (fixture.channels > 7) {
                                     fixtureData.values[7] = 0; // IMPORTANTE: Strobe OFF
                                 }
+                            } else if (fixture.type === 'par-rgb') {
+                                // Per RGB Cycle
+                                fixtureData.values[0] = 255;       // Dimmer
+                                fixtureData.values[1] = 0;         // Strobe OFF
+                                fixtureData.values[2] = 0;         // Effect OFF
+                                fixtureData.values[3] = 0;         // Speed 0
+                                fixtureData.values[4] = color.r;   // Red
+                                fixtureData.values[5] = color.g;   // Green
+                                fixtureData.values[6] = color.b;   // Blue
                             }
                             
                             return fixtureData;

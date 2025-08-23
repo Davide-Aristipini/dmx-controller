@@ -12,6 +12,8 @@ class FixtureManager {
             () => this.showAddFixtureModal('par'));
         document.getElementById('add-par-led')?.addEventListener('click', 
             () => this.showAddFixtureModal('par-led'));
+        document.getElementById('add-par-rgb')?.addEventListener('click', 
+            () => this.showAddFixtureModal('par-rgb'));
     }
 
     addFixture(type, name, startChannel, channels) {
@@ -118,6 +120,10 @@ class FixtureManager {
             r = fixture.values[1] || 0;
             g = fixture.values[2] || 0;
             b = fixture.values[3] || 0;
+        } else if (fixture.type === 'par-rgb') {
+            r = fixture.values[4] || 0;  // Ch5 = Red
+            g = fixture.values[5] || 0;  // Ch6 = Green
+            b = fixture.values[6] || 0;  // Ch7 = Blue
         } else {
             r = fixture.values[1] || 0;
             g = fixture.values[2] || 0;
@@ -174,6 +180,28 @@ class FixtureManager {
             this.app.dmxController.setChannel(fixture.startChannel + redIndex, r);
             this.app.dmxController.setChannel(fixture.startChannel + greenIndex, g);
             this.app.dmxController.setChannel(fixture.startChannel + blueIndex, b);
+        } else if (fixture.type === 'par-rgb') {
+            // Nuovo PAR RGB
+            dimmerIndex = 0;   // Ch1
+            redIndex = 4;      // Ch5
+            greenIndex = 5;    // Ch6
+            blueIndex = 6;     // Ch7
+            
+            fixture.values[dimmerIndex] = dimmer;
+            fixture.values[redIndex] = r;
+            fixture.values[greenIndex] = g;
+            fixture.values[blueIndex] = b;
+            fixture.values[1] = 0; // Strobe OFF di default
+            fixture.values[2] = 0; // Effect Mode OFF di default
+            fixture.values[3] = 0; // Effect Speed 0
+            
+            this.app.dmxController.setChannel(fixture.startChannel + dimmerIndex, dimmer);
+            this.app.dmxController.setChannel(fixture.startChannel + redIndex, r);
+            this.app.dmxController.setChannel(fixture.startChannel + greenIndex, g);
+            this.app.dmxController.setChannel(fixture.startChannel + blueIndex, b);
+            this.app.dmxController.setChannel(fixture.startChannel + 1, 0); // Strobe OFF
+            this.app.dmxController.setChannel(fixture.startChannel + 2, 0); // Effects OFF
+            this.app.dmxController.setChannel(fixture.startChannel + 3, 0); // Speed 0
         } else {
             dimmerIndex = 0;
             redIndex = 1;
@@ -280,6 +308,10 @@ class FixtureManager {
             return [
                 'Master Dimmer', 'Red', 'Green', 'Blue', 'Empty', 'Function', 'Function Speed'
             ];
+        } else if (type === 'par-rgb') {
+            return [
+                'Dimmer', 'Strobe', 'Effect Mode', 'Effect Speed', 'Red', 'Green', 'Blue'
+            ];
         } else {
             return ['Dimmer', 'Red', 'Green', 'Blue', 'White', 'Amber', 'UV', 'Strobe'];
         }
@@ -290,6 +322,7 @@ class FixtureManager {
         if (type === 'moving-head') return `Testa Mobile ${count}`;
         if (type === 'par') return `Luce Fissa ${count}`;
         if (type === 'par-led') return `PAR LED ${count}`;
+        if (type === 'par-rgb') return `PAR RGB ${count}`;
         return `Fixture ${count}`;
     }
 
@@ -303,12 +336,14 @@ class FixtureManager {
         if (type === 'moving-head') return 21;
         if (type === 'par') return 8;
         if (type === 'par-led') return 7;
+        if (type === 'par-rgb') return 7;  // Nuovo tipo
         return 8;
     }
 
     getFixtureIcon(type) {
         if (type === 'moving-head') return '🎯';
         if (type === 'par-led') return '🎨';
+        if (type === 'par-rgb') return '🌈';
         return '💡';
     }
 
@@ -316,6 +351,7 @@ class FixtureManager {
         if (type === 'moving-head') return '🎯 Aggiungi Testa Mobile';
         if (type === 'par') return '💡 Aggiungi Luce Fissa';
         if (type === 'par-led') return '🎨 Aggiungi PAR LED';
+        if (type === 'par-rgb') return '🌈 Aggiungi PAR RGB';
         return '⚙️ Fixture Personalizzata';
     }
 
@@ -323,6 +359,7 @@ class FixtureManager {
         if (type === 'moving-head') return 'Testa mobile WL-MI0810 (21 canali)';
         if (type === 'par') return 'Luce fissa PAR RGBW (8 canali)';
         if (type === 'par-led') return 'PAR LED Digital Display (7 canali)';
+        if (type === 'par-rgb') return 'PAR RGB con effetti (7 canali)';
         return 'Fixture personalizzata';
     }
 
